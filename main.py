@@ -1,24 +1,44 @@
 import random
 import os
 
-fileName = "items.txt"
-items = []
+directory = "choices"
+filePath = ""
+printText = "options: "
+
+def getFiles():
+	if not os.path.exists(directory):
+		os.mkdir(directory)
+
+	return os.listdir(directory)
 
 def getFileData():
-	global items
+	if os.path.exists(filePath):	
+		with open(filePath, "r") as f:
+			return f.read().splitlines(True)
+			# return f.read().split(",")
+	else:
+		print(f"Failed to get file data '{filePath}'")
 
-	if os.path.exists(fileName):
-		with open(fileName, "r") as f:
-			items = f.read().split(",")
-	else:	
-		with open(fileName, "w") as f:
-			f.write("example 1,example 2")
-
-def getRandomItem():
-	item = random.choice(items)
+def printRandomItem(options):
+	item = random.choice(options)
 
 	print(item)
 
-getRandomItem()
+def promptFilePath():
+	global filePath
 
-input()
+	filePath = directory + "/" + input("> ")
+
+	if not os.path.exists(filePath):
+		promptFilePath()
+
+for fileName in getFiles():
+	printText += fileName + " "
+
+print(printText)
+
+promptFilePath()
+
+printRandomItem(getFileData())
+
+input("Press enter to exit")
